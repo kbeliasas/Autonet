@@ -192,7 +192,7 @@ def draw_topology(graph, labels=None, graph_layout='shell',
         labels = range(len(graph))
 
     edge_labels = dict(zip(graph, labels))
-    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos)
+    #nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos)
 
     plt.show()
 
