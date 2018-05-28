@@ -332,6 +332,7 @@ while True:
             except Exception as e:
                 print "miss"
 
+    realations = []
 
     for x in range(0, len(manage)):
         for y in range(0, len(all_list[x])):
