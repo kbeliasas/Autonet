@@ -2,6 +2,8 @@
 
 import easysnmp
 import httplib2
+import networkx as nx
+import matplotlib.pyplot as plt
 import json
 import sys
 import logging
@@ -296,6 +298,16 @@ while True:
                         break
             except Exception as e:
                 print "miss"
+
+
+for x in range(0, len(manage)):
+    for y in range(0, len(all_list[x])):
+        temp = (manage[x], all_list[x][y])
+        realations.append(temp)
+
+
+
+draw_topology(realations,all_ports_topology)
 
 
     for list1 in added_macs:
