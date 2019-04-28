@@ -8,6 +8,7 @@ import json
 import sys
 import logging
 from ncclient import manager
+import time
 
 log = logging.getLogger(__name__)
 
@@ -213,6 +214,7 @@ def draw_topology(graph, labels, graph_layout='shell',
 
 
 while True:
+    start_time = time.time()
     h = httplib2.Http(".cache")
     h.add_credentials('admin', 'admin')
     resp, content = h.request('http://192.168.50.254:8181/restconf/operational/opendaylight-inventory:nodes', "GET")
@@ -380,7 +382,8 @@ while True:
             realations.append(temp)
 
 
-
+    elapsed_time = time.time() - start_time
+    print ("Topology gathered in %s s." % elapsed_time )
     draw_topology(realations,all_ports_topology)
 
 
