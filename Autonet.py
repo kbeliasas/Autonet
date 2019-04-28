@@ -91,6 +91,19 @@ def get_man_ip_add(ip):
         ans = 'failed'
         return ans
 
+def get_id_port(ip): # Pasiima kaimynu sasaju numerius
+    session = easysnmp.Session(hostname=ip, version=2, community=com)
+    try:
+        res = session.walk('.1.0.8802.1.1.2.1.4.1.1.7')
+        ans = []
+        for item in res:
+            ans.append(item.value)
+        return ans
+    except Exception as e:
+        ans = []
+        ans.append('')
+        return ans
+
 def get_port_macs(ip):
     session = easysnmp.Session(hostname=ip, version=2, community=com, use_sprint_value=True)
     res = session.walk('.1.3.6.1.2.1.2.2.1.6')
@@ -163,7 +176,7 @@ def remove_mac(host,user,password,mac,vlan):
         logging.basicConfig(level=logging.ERROR)
         remove_mac_second(host,user,password, mac, vlan)
 
-def draw_topology(graph, labels=None, graph_layout='shell',
+def draw_topology(graph, labels, graph_layout='shell',
                node_size=1600, node_color='blue', node_alpha=0.3,
                node_text_size=12,
                edge_color='blue', edge_alpha=0.3, edge_tickness=1,
@@ -192,7 +205,7 @@ def draw_topology(graph, labels=None, graph_layout='shell',
         labels = range(len(graph))
 
     edge_labels = dict(zip(graph, labels))
-    #nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos)
+    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos)
 
     plt.show()
 
@@ -224,6 +237,9 @@ while True:
         tested.append(ip)
     all_list = []
     temp_list = []
+    all_ports_topology = []
+    port_list = []
+    device_nei_ports = []
     for item in get_ip_add(ip):
         if get_man_ip_add(item) == 'failed':
             temp_list.append(item)
@@ -235,6 +251,12 @@ while True:
         else:
             temp_list.append(get_man_ip_add(item))
     all_list.append(temp_list)
+
+    for item in get_id_port(ip):
+        all_ports_topology.append(item)
+        port_list.append(item)
+
+    device_nei_ports = [port_list]
 
 
     x = 0
@@ -288,6 +310,15 @@ while True:
                                             else:
                                                 temp_list.append(get_man_ip_add(item))
                                         all_list.append(temp_list)
+
+                                        port_list = []
+
+                                        for item in get_id_port(ip):
+                                            all_ports_topology.append(item)
+                                            port_list.append(item)
+
+                                        device_nei_ports = [port_list]
+
                                         b = -2
                                         break
                         elif ip == get_man_ip_add(ip):
@@ -305,6 +336,15 @@ while True:
                                 else:
                                     temp_list.append(get_man_ip_add(item))
                             all_list.append(temp_list)
+
+                            port_list = []
+
+                            for item in get_id_port(ip):
+                                all_ports_topology.append(item)
+                                port_list.append(item)
+
+                            device_nei_ports = [port_list]
+
                         if (len(all_list[x]) > y + 1):
                             y = y + 1
                             z = 0
@@ -341,7 +381,7 @@ while True:
 
 
 
-    draw_topology(realations) #,all_ports_topology
+    draw_topology(realations,all_ports_topology)
 
 
     for list1 in added_macs:
